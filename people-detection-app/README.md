@@ -41,12 +41,15 @@ This open-source reference solution showcases best practices for AI security, pr
 
 ---
 
-## App Deployment
+## Deploy the App through the Azure Portal
+
 Deployment starts with this button. Please reference the below details for populating the requested deployment information.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Funifiededgescenariostest.blob.core.windows.net%2Farm-template%2Fazure-percept%2Flatest%2FARM-template.json)
 
-This will redirect you to the Azure portal with this deployment page:
+> Tip:  For a programmatic deployment alternative see [Programmatically Deploy the App with the Azure CLI][#programmatically-deploy-the-app-with-the-azure-cli].
+
+The "Deploy to Azure" button will redirect you to the Azure portal with this deployment page:
 
 ![People Detector](docs/images/Custom-Deployment-Percept.png)
 #
@@ -66,11 +69,142 @@ To deploy this reference solution, please enter the following parameters:
 | __Password__ | A password to protect access to the web app which visualizes your output. A best practice is to assign a password to prevent others on the internet from seeing the testing output of your Percept DK. |
 
 
-Once deployment is complete, you can launch the web application by navigating to the `Resource Group AMS` name selected above. You will see an Azure Web Services deployment which starts with `ues-perceptapp` followed by 4 random characters. Select this app, then chose the `Browse` button in the top left:
+Once deployment is complete (in approximately 20-25min), you can launch the web application by navigating to the `Resource Group AMS` name selected above. You will see an Azure Web Services deployment which starts with `ues-perceptapp` followed by 4 random characters. Select this app, then chose the `Browse` button in the top left:
 
 ![Web Application](docs/images/Web-App-Launch.png)
 
 Once the application loads, you will need to enter the password you entered at deployment time. The password is cached for subsequent visits to the same application.
+
+> Tip: to successfully redeploy, the Role Assignment associated with the Service Principal will need to be deleted, if using the same Service Principal.  See [Remove Azure role assignments](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-remove) for a guide on how to do so.
+
+## Programmatically Create a Service Principal with the Azure CLI
+
+The process of programmatically creating a Service Principal through an App Registration using the Azure CLI is shown in this section.  This is an alternative to creating an App Registration and password/secret through the Azure Portal.  The Azure CLI must be installed on the machine from which the commands will be run.  If no Azure CLI is installed, follow [these steps](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) for the appropriate OS.
+
+Log in interactively to Azure with the Azure CLI as follows:
+```bash
+az login
+```
+
+Choose the correct subscription (if there is more than one) as follows:
+```bash
+az account set --subscription <Azure subsciption name or ID>
+```
+
+To create an AAD Service Principal-based App Registration with a password/secret using the Azure CLI, perform the following (filling in the `<>` with new values - not including the `<>` symbols, however):
+
+```bash
+az ad sp create-for-rbac -n "<new name for app registration>"
+```
+
+The command above will provide the App ID and password.  To show more information such as the Object ID, use the following command:
+
+```bash
+az ad sp show --id "<app id>"
+```
+
+The command above should provide output with the App ID and Object ID along with the rest of the information regarding the App Registration and associated Service Principal.  The App ID and password/secret will be needed for the ARM template parameters in the deployment steps in the next section.
+
+>  Tip:  Please check for pre-existing Role Assignments for the Azure Subscription (if the IoT Hub resource group has any from previous deployments then the deployment will not succeed).
+
+To check for pre-existing Role Assignments use the following command:
+
+```bash
+az role assignment list --all
+```
+
+The `list` command will output potentially many responses similar to the one below:
+
+```json
+  {
+    "canDelegate": null,
+    "condition": null,
+    "conditionVersion": null,
+    "description": null,
+    "id": "/subscriptions/<azure subscription id>/resourcegroups/<iot hub resource group>/providers/Microsoft.Authorization/roleAssignments/<assignment name>",
+    "name": "<assignment name>",
+    "principalId": "<service principal id>",
+    "principalName": "",
+    "principalType": "ServicePrincipal",
+    "resourceGroup": "<iot hub resource group>",
+    "roleDefinitionId": "/subscriptions/<azure subscription id>/providers/Microsoft.Authorization/roleDefinitions/<role definition id>",
+    "roleDefinitionName": "Contributor",
+    "scope": "/subscriptions/<azure subscription id>/resourcegroups/<iot hub resource group>",
+    "type": "Microsoft.Authorization/roleAssignments"
+  }
+```
+
+Take care to only delete the Role Assignments associated with the IoT Hub resource group with `Contributor` as the `roleDefinitionName` as these were the ones created for the Service Principals associated with previous deployments.  Delete Role Assignments associated with the IoT Hub resource group before redeploying (deleting just Managed Identities in the AMS resource group will _not_ delete the Role Assignments).  To delete a Role Assignment use the following command for each ID found (`id`, above):
+
+```bash
+az role assignment delete --ids <full id e.g. "/subscriptions/<azure subscription id>/resourcegroups/<iot hub resource group>/providers/Microsoft.Authorization/roleAssignments/<assignment name>">
+```
+
+The next section will walk through a programmatic deployment alternative to using the "Deploy to Azure" button.
+
+## Programmatically Deploy the App with the Azure CLI
+
+The process to programmatically deploy or redeploy the People Counting reference solution with the Azure CLI is shown in this section.  This is an alternative to using the "Deploy to Azure" button.  Ensure a Service Principal (App ID, Object ID and password/secret) is available from the AAD Application Registration process shown in the previous section or from [this how-to-guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal).  The Azure CLI must be installed on the machine from which the commands will be run.  If no Azure CLI is installed, follow [these steps](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) for the appropriate OS.
+
+Create a parameters file that looks like this one shown to make the deployment from the command line easier (these are the user-defined parameters for the ARM template).  Fill in the `<>` parts in the template below and name this file `ARM-template.parameters.json` - placing it in the same directory as the main ARM template:
+
+```json
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroupDevice": {
+            "value": "<name of existing resource group of the edge device and iot hub>"
+        },
+        "resourceGroupAMS": {
+            "value": "<a new name for the media services resource group>"
+        },
+        "existingIotHubName": {
+            "value": "<name of existing iot hub>"
+        },
+        "existingDeviceName": {
+            "value": "<name of existing Percept edge device>"
+        },
+        "servicePrincipalId": {
+            "value": "<service principal application id>"
+        },
+        "servicePrincipalSecret": {
+            "value": "<service principal secret>"
+        },
+        "password": {
+            "value": "<a new password for the web app>"
+        }
+    }
+}
+```
+
+Log in interactively to the Azure CLI as follows if not logged in already:
+```bash
+az login
+```
+
+Choose the correct subscription (if there are more than one) as follows if this has not been done, yet:
+```bash
+az account set --subscription <Azure subsciption name or ID>
+```
+
+The following commands shows how to deploy with the Azure CLI into a subscription with a parameter template file (created in this section above):
+
+> Tip: if the deployment fails, consider adding `--debug > deploy-log.txt 2>&1` to the end of the command below when running again for full, realtime logs, redirected to a file (they are long).  Ensure the clean-up steps below have been performed before redeploying.
+
+```bash
+az deployment sub create --location WestUS --name michhar-people-counting --template-file ARM-template.json --parameters @ARM-template.parameters.json
+```
+
+To clean up a deployment so that you may redeploy with the same parameters, perform the following with the Azure CLI:
+
+> Tip:  to get all Role Assignments use `az role assignment list --all`
+
+```bash
+az deployment sub delete --name <name of deployment>
+az group delete --name <name of AMS resource group>
+az role assignment delete --ids <id of role assignment created in deployment>
+```
 
 # People Counting in a Zone
 
