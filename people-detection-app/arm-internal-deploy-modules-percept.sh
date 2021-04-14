@@ -20,41 +20,83 @@ exitWithError() {
     exit 1
 }
 
-SAS_URL="https://unifiededgescenarios.blob.core.windows.net/arm-template/azure-percept/latest/azurepercept-bundle.zip"
+# SAS_URL="https://generalstore123.blob.core.windows.net/publicscripts/manifest-bundle-michhar.zip"
 
 
-echo "Downloading manifest bundle zip"
+# echo "Downloading manifest bundle zip"
 
-# Download the latest manifest-bundle.zip from storage account
-wget -O manifest-bundle.zip "$SAS_URL"
+# # Download the latest manifest-bundle.zip from storage account
+# wget -O manifest-bundle.zip "$SAS_URL"
 
-# Extracts all the files from zip in curent directory;
-# overwrite existing ones
-echo "Unzipping the files"
-unzip -o manifest-bundle.zip -d "manifest-bundle"
+# # Extracts all the files from zip in curent directory;
+# # overwrite existing ones
+# echo "Unzipping the files"
+# unzip -o manifest-bundle.zip -d "manifest-bundle"
+# cd manifest-bundle
+
+# echo "Unzipped the files in directory manifest-bundle"
+
+mkdir manifest-bundle
 cd manifest-bundle
 
-echo "Unzipped the files in directory manifest-bundle"
+echo "$(info) Downloading LVA deployment files"
 
+wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology-params.json" || true
+wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology.json" || true
+wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva.template.json" || true
+wget "https://generalstore123.blob.core.windows.net/publicscripts/myenv"
 
-echo "Installing packages"
-pip install --upgrade requests
-echo "Installing iotedgedev"
-pip install iotedgedev==2.1.4
+# Rename the environment variables file
+mv myenv .env
 
-echo "Updating az-cli"
-pip install --upgrade azure-cli
-pip install --upgrade azure-cli-telemetry
+echo "$(info) Downloaded the LVA deployment files to directory manifest-bundle"
+
+# echo "Installing packages"
+# pip install --upgrade requests
+# echo "Installing iotedgedev"
+# pip install iotedgedev==2.1.4
+
+# echo "Updating az-cli"
+# pip install --upgrade azure-cli
+# pip install --upgrade azure-cli-telemetry
+
+# echo "installing azure iot extension"
+# az extension add --name azure-iot
+
+# echo "installing sshpass, coreutils and jsonschema"
+# pip3 install --upgrade jsonschema
+# apk add coreutils
+# apk add sshpass
+
+# echo "package installation is complete"
+
+echo "$(info) Creating a Python virtual environment and updating pip"
+python3 -m venv /opt/pyenv
+source /opt/pyenv/bin/activate
+pip install --upgrade pip
+
+# Install Rust compiler - workaround to get latest cryptography installed
+echo "$(info) Installing rust compiler for cryptography package build"
+apk add curl
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs  > rustuprs.sh || true
+chmod +x rustuprs.sh
+./rustuprs.sh -y  || true
+# Might not always need this env var with future versions
+export CRYPTOGRAPHY_DONT_BUILD_RUST=1
+
+echo "$(info) Installing required Python packages"
+pip install --upgrade --no-deps requests==2.20 || true
+pip install --upgrade --ignore-installed iotedgedev==3.0.0 || true
 
 echo "installing azure iot extension"
 az extension add --name azure-iot
 
 echo "installing sshpass, coreutils and jsonschema"
-pip3 install --upgrade jsonschema
+pip install --upgrade jsonschema==2.5.1
 apk add coreutils
 apk add sshpass
 
-echo "package installation is complete"
+echo "$(info) Python package installation is complete"
 
 # We're enabling exit on error after installation steps as there are some warnings and error thrown in installation steps which causes the script to fail
 set -e
