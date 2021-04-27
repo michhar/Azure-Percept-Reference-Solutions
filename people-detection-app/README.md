@@ -17,7 +17,7 @@ This application requires an Azure Percept DK.
 This open-source reference solution showcases best practices for AI security, privacy and compliance.  It is intended to be immediately useful for anyone to use with their Percept DK device. 
 
 ## Prerequisites
-- A service principal with an object id, app id, and secret is required in order to deploy the solution. Please ensure you have the appropriate rights to create such a service principal, or contact your Azure Active Directory Administrator to assist you in creating one. You can follow this [how-to guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal) to create the required service principal.
+- A service principal with an object id, app id, and secret is required in order to deploy the solution. Please ensure you have the appropriate rights to create such a service principal, or contact your Azure Active Directory Administrator to assist you in creating one. You can follow this [how-to guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal) to create the required service principal or do so [programmatically as shown below](#programmatically-create-a-service-principal-with-the-azure-cli).
 
 - You must have owner access on the Azure subscription you wish to deploy to
 
@@ -45,7 +45,7 @@ This open-source reference solution showcases best practices for AI security, pr
 
 Deployment starts with this button. Please reference the below details for populating the requested deployment information.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Funifiededgescenariostest.blob.core.windows.net%2Farm-template%2Fazure-percept%2Flatest%2FARM-template.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmichhar%2FAzure-Percept-Reference-Solutions%2Fmichhar%2Ftest-arm%2Fpeople-detection-app%2FARM-template.json)
 
 > Tip:  For a programmatic deployment alternative see [Programmatically Deploy the App with the Azure CLI](#programmatically-deploy-the-app-with-the-azure-cli).
 
@@ -64,7 +64,6 @@ To deploy this reference solution, please enter the following parameters:
 | __Existing IoT Hub Name__ | Name of a the IoT Hub that your Azure Percept DK device is registered as an edge device. |
 | __Existing Device Name__ | Name of the IoT Edge device in IoT Hub which is connected to Azure Percept DK. |
 | __Service Principal Id__ | Id of an existing Service Principal which will be used in Azure Media Service. |
-| __Service Principal Object Id__ | Object Id of an existing Service Principal which will be used in Azure Media Service. |
 | __Service Principal Secret__ | Secret of an existing Service Principal which will be used in Azure Media Service. |
 | __Password__ | A password to protect access to the web app which visualizes your output. A best practice is to assign a password to prevent others on the internet from seeing the testing output of your Percept DK. |
 
@@ -196,9 +195,9 @@ The following commands shows how to deploy with the Azure CLI into a subscriptio
 az deployment sub create --location WestUS --name michhar-people-counting --template-file ARM-template.json --parameters @ARM-template.parameters.json
 ```
 
-To clean up a deployment so that you may redeploy with the same parameters, perform the following with the Azure CLI:
+To clean up a deployment so that you may redeploy with the same parameters, perform the following with the Azure CLI.
 
-> Tip:  to get all Role Assignments use `az role assignment list --all`
+> Tip:  to get all Role Assignments use `az role assignment list --all`, look for the ones in the resource group of the IoT resources (`<name of existing resource group of the edge device and iot hub>`) and delete them using the "id" as shown below.
 
 ```bash
 az deployment sub delete --name <name of deployment>

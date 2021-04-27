@@ -63,13 +63,7 @@
         "runtime": {
           "settings": {
             "minDockerVersion": "v1.25",
-            "registryCredentials": {
-              "rtptofficial": {
-                "address": "$ACR_NAME",
-                "password": "$ACR_PASSWORD",
-                "username": "$ACR_USERNAME"
-              }
-            }
+            "registryCredentials": {}
           },
           "type": "docker"
         },
