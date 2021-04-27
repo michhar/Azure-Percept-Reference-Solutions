@@ -20,22 +20,6 @@ exitWithError() {
     exit 1
 }
 
-# SAS_URL="https://generalstore123.blob.core.windows.net/publicscripts/manifest-bundle-michhar.zip"
-
-
-# echo "Downloading manifest bundle zip"
-
-# # Download the latest manifest-bundle.zip from storage account
-# wget -O manifest-bundle.zip "$SAS_URL"
-
-# # Extracts all the files from zip in curent directory;
-# # overwrite existing ones
-# echo "Unzipping the files"
-# unzip -o manifest-bundle.zip -d "manifest-bundle"
-# cd manifest-bundle
-
-# echo "Unzipped the files in directory manifest-bundle"
-
 mkdir manifest-bundle
 cd manifest-bundle
 
@@ -44,31 +28,8 @@ echo "$(info) Downloading LVA deployment files"
 wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology-params.json" || true
 wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology.json" || true
 wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva.template.json" || true
-wget "https://generalstore123.blob.core.windows.net/publicscripts/myenv"
-
-# Rename the environment variables file
-mv myenv .env
-
-echo "$(info) Downloaded the LVA deployment files to directory manifest-bundle"
-
-# echo "Installing packages"
-# pip install --upgrade requests
-# echo "Installing iotedgedev"
-# pip install iotedgedev==2.1.4
-
-# echo "Updating az-cli"
-# pip install --upgrade azure-cli
-# pip install --upgrade azure-cli-telemetry
-
-# echo "installing azure iot extension"
-# az extension add --name azure-iot
-
-# echo "installing sshpass, coreutils and jsonschema"
-# pip3 install --upgrade jsonschema
-# apk add coreutils
-# apk add sshpass
-
-# echo "package installation is complete"
+# wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/.env"
+wget "https://raw.githubusercontent.com/michhar/Azure-Percept-Reference-Solutions/michhar/test-arm/people-detection-app/.env" # temp
 
 echo "$(info) Creating a Python virtual environment and updating pip"
 python3 -m venv /opt/pyenv
@@ -97,9 +58,6 @@ apk add coreutils
 apk add sshpass
 
 echo "$(info) Python package installation is complete"
-
-# We're enabling exit on error after installation steps as there are some warnings and error thrown in installation steps which causes the script to fail
-set -e
 
 # Check for existence of IoT Hub and Edge device in Resource Group for IoT Hub,
 # and based on that either throw error or use the existing resources

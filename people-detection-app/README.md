@@ -47,7 +47,7 @@ Deployment starts with this button. Please reference the below details for popul
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Funifiededgescenariostest.blob.core.windows.net%2Farm-template%2Fazure-percept%2Flatest%2FARM-template.json)
 
-> Tip:  For a programmatic deployment alternative see [Programmatically Deploy the App with the Azure CLI][#programmatically-deploy-the-app-with-the-azure-cli].
+> Tip:  For a programmatic deployment alternative see [Programmatically Deploy the App with the Azure CLI](#programmatically-deploy-the-app-with-the-azure-cli).
 
 The "Deploy to Azure" button will redirect you to the Azure portal with this deployment page:
 

@@ -668,7 +668,7 @@
                           "properties": {
                             "forceUpdateTag": "[parameters('utcValue')]",
                             "azCliVersion": "2.19.1",
-                            "primaryScriptUri": "https://generalstore123.blob.core.windows.net/publicscripts/arm-internal-deploy-modules-percept.sh",
+                            "primaryScriptUri": "https://raw.githubusercontent.com/michhar/Azure-Percept-Reference-Solutions/michhar/test-arm/people-detection-app/arm-internal-deploy-modules-percept.sh",
                             "supportingScriptUris": [],
                             "environmentVariables": [
                               {
