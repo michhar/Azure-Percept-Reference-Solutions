@@ -27,7 +27,7 @@ echo "$(info) Downloading LVA deployment files"
 
 wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology-params.json" || true
 wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology.json" || true
-wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva.template.json" || true
+wget "https://raw.githubusercontent.com/michhar/Azure-Percept-Reference-Solutions/michhar/test-arm/people-detection-app/deployment.peoplecounting.template.json" || true
 # wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/.env"
 wget "https://raw.githubusercontent.com/michhar/Azure-Percept-Reference-Solutions/michhar/test-arm/people-detection-app/.env" # temp
 
