@@ -874,7 +874,7 @@
                                         "[variables('webappName')]"
                                     ],
                                     "properties": {
-                                        "packageUri": "https://unifiededgescenarios.blob.core.windows.net/arm-template/azure-eye/latest/people-detection-app.zip"
+                                        "packageUri": "https://unifiededgescenariostest.blob.core.windows.net/arm-template/azure-percept/latest/people-detection-app.zip"
                                     }
                                 }
                             ]
