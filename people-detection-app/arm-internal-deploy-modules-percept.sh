@@ -81,7 +81,7 @@ fi
 echo "$(info) Retrieving Edge Device connection string"
 EDGE_DEVICE_CONNECTION_STRING=$(az iot hub device-identity connection-string show --device-id "$DEVICE_NAME" --hub-name "$IOTHUB_NAME" --query "connectionString" -o tsv)
 
-MANIFEST_TEMPLATE_NAME="lva.template.json"
+MANIFEST_TEMPLATE_NAME="deployment.peoplecounting.template.json"
 MANIFEST_ENVIRONMENT_VARIABLES_FILENAME='.env'
 
 echo "$(info) Updating variable values in environment file"
