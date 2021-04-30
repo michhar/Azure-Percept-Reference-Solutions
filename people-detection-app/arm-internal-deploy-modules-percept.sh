@@ -25,12 +25,12 @@ cd manifest-bundle
 
 echo "$(info) Downloading LVA deployment files"
 
-wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology-params.json" || true
-wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology.json" || true
-# wget "https://raw.githubusercontent.com/michhar/Azure-Percept-Reference-Solutions/michhar/test-arm/people-detection-app/deployment.peoplecounting.template.json" || true
-wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva.template.json"
-wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/.env"
-# wget "https://raw.githubusercontent.com/michhar/Azure-Percept-Reference-Solutions/michhar/test-arm/people-detection-app/.env" # temp
+wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology-params.json"
+wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva-topology.json"
+wget "https://raw.githubusercontent.com/michhar/Azure-Percept-Reference-Solutions/michhar/test-arm/people-detection-app/deployment.peoplecounting.template.json"
+wget "https://raw.githubusercontent.com/michhar/Azure-Percept-Reference-Solutions/michhar/test-arm/people-detection-app/.env"
+# wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/lva.template.json"
+# wget "https://raw.githubusercontent.com/microsoft/Azure-Percept-Reference-Solutions/main/people-detection-app/.env"
 
 echo "$(info) Creating a Python virtual environment and updating pip"
 python3 -m venv /opt/pyenv
@@ -82,7 +82,7 @@ fi
 echo "$(info) Retrieving Edge Device connection string"
 EDGE_DEVICE_CONNECTION_STRING=$(az iot hub device-identity connection-string show --device-id "$DEVICE_NAME" --hub-name "$IOTHUB_NAME" --query "connectionString" -o tsv)
 
-MANIFEST_TEMPLATE_NAME="lva.template.json"
+MANIFEST_TEMPLATE_NAME="deployment.peoplecounting.template.json"
 MANIFEST_ENVIRONMENT_VARIABLES_FILENAME='.env'
 
 echo "$(info) Updating variable values in environment file"
